@@ -29,11 +29,16 @@ export function ExpenseList({ expenses, category, onCategoryChange, onDelete, lo
       <ul>
         {expenses.map((expense) => (
           <li key={expense._id}>
-            <span className="expense-date">{formatDate(expense.date)}</span>
-            <span className="expense-category">{CATEGORY_LABELS[expense.category]}</span>
+            <span className="expense-meta">
+              {formatDate(expense.date)} · {CATEGORY_LABELS[expense.category]}
+            </span>
             <span className="expense-description">{expense.description}</span>
             <span className="expense-amount">{formatAmount(expense.amount)}</span>
-            <button onClick={() => onDelete(expense._id)} aria-label="Eliminar gasto">
+            <button
+              className="expense-delete"
+              onClick={() => onDelete(expense._id)}
+              aria-label="Eliminar gasto"
+            >
               ✕
             </button>
           </li>

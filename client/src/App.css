@@ -75,11 +75,17 @@
 
 .expense-list li {
   display: grid;
-  grid-template-columns: auto auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto auto;
   gap: 0.75rem;
   align-items: center;
   padding: 0.5rem 0;
   border-bottom: 1px solid #eee;
+}
+
+.expense-meta {
+  color: #777;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .expense-amount {
@@ -87,6 +93,48 @@
   text-align: right;
 }
 
+.expense-delete {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+}
+
 .error {
   color: #c0392b;
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 1rem 0.75rem;
+  }
+
+  .expense-list-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .expense-list li {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'desc amount'
+      'meta delete';
+    row-gap: 0.35rem;
+  }
+
+  .expense-meta {
+    grid-area: meta;
+  }
+
+  .expense-description {
+    grid-area: desc;
+    font-weight: 500;
+  }
+
+  .expense-amount {
+    grid-area: amount;
+  }
+
+  .expense-delete {
+    grid-area: delete;
+    justify-self: end;
+  }
 }

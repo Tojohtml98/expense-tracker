@@ -23,8 +23,8 @@ export function ExpenseList({ expenses, category, onCategoryChange, onDelete, lo
         </select>
       </div>
 
-      {loading && <p>Cargando...</p>}
-      {!loading && expenses.length === 0 && <p>No hay gastos cargados.</p>}
+      {loading && <p className="list-status">Cargando gastos…</p>}
+      {!loading && expenses.length === 0 && <p className="list-status">Todavía no hay gastos este mes.</p>}
 
       <ul>
         {expenses.map((expense) => (
@@ -39,7 +39,7 @@ export function ExpenseList({ expenses, category, onCategoryChange, onDelete, lo
               onClick={() => onDelete(expense._id)}
               aria-label="Eliminar gasto"
             >
-              ✕
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
             </button>
           </li>
         ))}

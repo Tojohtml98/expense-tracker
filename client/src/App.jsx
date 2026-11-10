@@ -20,7 +20,10 @@ function App() {
 
   return (
     <div className="app">
-      <h1>Registro de gastos</h1>
+      <header className="app-header">
+        <h1>Registro de gastos</h1>
+        <p>Cargá tus gastos y mirá en qué se va la plata cada mes.</p>
+      </header>
 
       {error && <p className="error">{error}</p>}
 

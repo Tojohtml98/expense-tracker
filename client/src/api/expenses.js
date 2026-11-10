@@ -5,7 +5,11 @@ async function request(path, options = {}) {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });
-  const body = await res.json();
+  // Si la API no devuelve JSON (caída, despertando, URL mal configurada),
+  // mostramos un mensaje entendible en vez de "Unexpected token '<'".
+  const body = await res.json().catch(() => {
+    throw new Error('No pudimos conectar con el servidor. Probá de nuevo en unos segundos.');
+  });
 
   if (!res.ok) {
     throw new Error(body.message || 'Request failed');

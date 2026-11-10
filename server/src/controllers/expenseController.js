@@ -11,9 +11,14 @@ function monthRange(monthParam) {
   return { start, end };
 }
 
+// Solo estos campos vienen del cliente: owner sale del header, nunca del body.
+const EDITABLE = ['amount', 'category', 'description', 'date'];
+const pick = (body = {}) =>
+  Object.fromEntries(EDITABLE.filter((k) => body[k] !== undefined).map((k) => [k, body[k]]));
+
 export const getExpenses = async (req, res) => {
   const { month, category } = req.query;
-  const filter = {};
+  const filter = { owner: req.visitorId };
 
   if (month) {
     const { start, end } = monthRange(month);
@@ -28,18 +33,18 @@ export const getExpenses = async (req, res) => {
 };
 
 export const getExpenseById = async (req, res, next) => {
-  const expense = await Expense.findById(req.params.id);
+  const expense = await Expense.findOne({ _id: req.params.id, owner: req.visitorId });
   if (!expense) return next(new AppError('Expense not found', 404));
   res.json({ success: true, data: expense });
 };
 
 export const createExpense = async (req, res) => {
-  const expense = await Expense.create(req.body);
+  const expense = await Expense.create({ ...pick(req.body), owner: req.visitorId });
   res.status(201).json({ success: true, data: expense });
 };
 
 export const updateExpense = async (req, res, next) => {
-  const expense = await Expense.findByIdAndUpdate(req.params.id, req.body, {
+  const expense = await Expense.findOneAndUpdate({ _id: req.params.id, owner: req.visitorId }, pick(req.body), {
     new: true,
     runValidators: true,
   });
@@ -48,7 +53,7 @@ export const updateExpense = async (req, res, next) => {
 };
 
 export const deleteExpense = async (req, res, next) => {
-  const expense = await Expense.findByIdAndDelete(req.params.id);
+  const expense = await Expense.findOneAndDelete({ _id: req.params.id, owner: req.visitorId });
   if (!expense) return next(new AppError('Expense not found', 404));
   res.json({ success: true, data: {} });
 };
@@ -57,7 +62,7 @@ export const getSummary = async (req, res) => {
   const { start, end } = monthRange(req.query.month);
 
   const byCategory = await Expense.aggregate([
-    { $match: { date: { $gte: start, $lt: end } } },
+    { $match: { owner: req.visitorId, date: { $gte: start, $lt: end } } },
     { $group: { _id: '$category', total: { $sum: '$amount' } } },
     { $sort: { total: -1 } },
   ]);

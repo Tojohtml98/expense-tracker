@@ -14,6 +14,15 @@ API REST + SPA para registrar gastos mensuales, con resumen por categoría.
 - Alta, edición y baja de gastos (monto, categoría, descripción, fecha)
 - Listado del mes actual con filtro por categoría
 - Resumen: total del mes + total por categoría
+- **Cada visitante ve solo sus gastos, sin crear cuenta:** el navegador genera un UUID al azar
+  (`crypto.randomUUID`), lo guarda en `localStorage` y lo manda en el header `X-Visitor-Id`.
+  La API filtra toda consulta por ese ID e ignora cualquier `owner` que venga en el body.
+
+## Deploy
+
+- **Cliente:** Vercel (root `client/`, preset Vite).
+- **API:** Vercel serverless (root `server/`): `api/index.js` envuelve la misma app de Express
+  y reusa la conexión a Mongo entre invocaciones. Variable requerida: `MONGO_URI`.
 
 ## Correr en local (sin Docker)
 
@@ -36,5 +45,6 @@ docker compose up -d --build
 ## Tests
 
 ```bash
-cd server && npm test
+cd server && npm test     # 8 tests: CRUD, resumen y aislamiento entre visitantes
+cd client && npx vitest   # 4 tests del formulario
 ```

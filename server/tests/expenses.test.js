@@ -1,6 +1,12 @@
 import request from 'supertest';
 import app from '../src/app.js';
 
+const VISITOR = '6f1c2a3b-4d5e-4f60-8a7b-9c0d1e2f3a4b';
+const api = {
+  get: (url) => request(app).get(url).set('X-Visitor-Id', VISITOR),
+  post: (url) => request(app).post(url).set('X-Visitor-Id', VISITOR),
+};
+
 const validExpense = {
   amount: 2500,
   category: 'food',
@@ -10,7 +16,7 @@ const validExpense = {
 
 describe('POST /api/expenses', () => {
   it('creates an expense with valid data', async () => {
-    const res = await request(app).post('/api/expenses').send(validExpense);
+    const res = await api.post('/api/expenses').send(validExpense);
 
     expect(res.status).toBe(201);
     expect(res.body.success).toBe(true);
@@ -19,7 +25,7 @@ describe('POST /api/expenses', () => {
   });
 
   it('rejects an invalid category with 400', async () => {
-    const res = await request(app)
+    const res = await api
       .post('/api/expenses')
       .send({ ...validExpense, category: 'not-a-real-category' });
 
@@ -30,16 +36,16 @@ describe('POST /api/expenses', () => {
 
 describe('GET /api/expenses/summary', () => {
   it('returns total and total by category for the given month', async () => {
-    await request(app).post('/api/expenses').send(validExpense);
-    await request(app)
+    await api.post('/api/expenses').send(validExpense);
+    await api
       .post('/api/expenses')
       .send({ amount: 1000, category: 'transport', date: '2026-08-15' });
     // Fuera del mes filtrado, no debería contar
-    await request(app)
+    await api
       .post('/api/expenses')
       .send({ amount: 999, category: 'food', date: '2026-07-01' });
 
-    const res = await request(app).get('/api/expenses/summary?month=2026-08');
+    const res = await api.get('/api/expenses/summary?month=2026-08');
 
     expect(res.status).toBe(200);
     expect(res.body.data.total).toBe(3500);

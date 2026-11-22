@@ -2,9 +2,10 @@ import { useExpenses } from './hooks/useExpenses.js';
 import { ExpenseForm } from './components/ExpenseForm.jsx';
 import { ExpenseList } from './components/ExpenseList.jsx';
 import { Summary } from './components/Summary.jsx';
+import { DeviceLink } from './components/DeviceLink.jsx';
 import './App.css';
 
-function App() {
+function App({ justLinked = false }) {
   const {
     month,
     setMonth,
@@ -16,6 +17,7 @@ function App() {
     error,
     addExpense,
     removeExpense,
+    refresh,
   } = useExpenses();
 
   return (
@@ -39,6 +41,8 @@ function App() {
         onDelete={removeExpense}
         loading={loading}
       />
+
+      <DeviceLink onLinked={refresh} justLinked={justLinked} />
     </div>
   );
 }

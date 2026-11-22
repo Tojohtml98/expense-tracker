@@ -52,5 +52,6 @@ export function useExpenses() {
     error,
     addExpense,
     removeExpense,
+    refresh,
   };
 }

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
-import { linkDevice, linkUrl, visitorId } from '../api/device.js';
+import { isInstalledApp, linkDevice, linkUrl, startedFresh, visitorId } from '../api/device.js';
 
 export function DeviceLink({ onLinked, justLinked }) {
-  const [open, setOpen] = useState(false);
+  // App instalada que arrancó vacía: abre el panel solo para pegar el link de la PC
+  const [open, setOpen] = useState(() => !justLinked && isInstalledApp() && startedFresh());
   const [qr, setQr] = useState('');
   const [code, setCode] = useState('');
   const [message, setMessage] = useState(

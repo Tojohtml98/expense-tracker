@@ -6,7 +6,8 @@
 const VISITOR_KEY = 'expense-tracker:visitor';
 const PREVIOUS_KEY = 'expense-tracker:visitor-anterior';
 const HASH_PREFIX = '#vincular=';
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+// Sin anclas: acepta el código solo o el link entero ("Copiar link") pegado en el campo.
+const UUID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
 
 let memoryId;
 
@@ -26,8 +27,9 @@ export function visitorId() {
 }
 
 export function linkDevice(code) {
-  const id = String(code ?? '').trim().toLowerCase();
-  if (!UUID_RE.test(id)) return false;
+  const match = decodeURIComponent(String(code ?? '')).toLowerCase().match(UUID_RE);
+  if (!match) return false;
+  const id = match[0];
   const current = visitorId();
   if (id === current) return true;
   try {
@@ -43,7 +45,7 @@ export function linkDevice(code) {
 export function applyLinkFromHash() {
   const { hash, pathname, search } = window.location;
   if (!hash.startsWith(HASH_PREFIX)) return false;
-  const ok = linkDevice(decodeURIComponent(hash.slice(HASH_PREFIX.length)));
+  const ok = linkDevice(hash.slice(HASH_PREFIX.length));
   window.history.replaceState(null, '', pathname + search);
   return ok;
 }

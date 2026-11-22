@@ -68,7 +68,7 @@ export function DeviceLink({ onLinked, justLinked }) {
             <code className="device-link-code">{visitorId()}</code>
 
             <label>
-              ¿Tenés el código de otro dispositivo? Pegalo acá
+              ¿Tenés el código o el link de otro dispositivo? Pegalo acá
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value)}

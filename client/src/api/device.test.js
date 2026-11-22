@@ -24,6 +24,11 @@ describe('linkDevice', () => {
     expect(localStorage.getItem('expense-tracker:visitor-anterior')).toBe(viejo);
   });
 
+  it('acepta el link entero pegado en el campo (botón "Copiar link")', () => {
+    expect(linkDevice(`https://expense-tracker-fawn-ten-40.vercel.app/#vincular=${OTRO}`)).toBe(true);
+    expect(visitorId()).toBe(OTRO);
+  });
+
   it('rechaza un código inválido sin tocar el actual', () => {
     const actual = visitorId();
     expect(linkDevice('cualquier-cosa')).toBe(false);

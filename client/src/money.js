@@ -42,3 +42,16 @@ export function simulate({ available, amount, daysLeft }) {
 const DAY_FMT = new Intl.DateTimeFormat('es-AR', { weekday: 'short', day: 'numeric', month: 'numeric', timeZone: 'UTC' });
 // "2026-11-21" → "sáb, 21/11" (fecha de calendario: se formatea en UTC para no correrla)
 export const formatDay = (isoDay) => DAY_FMT.format(new Date(`${isoDay}T00:00:00Z`));
+
+// "Tengo vs tendría": solo cuentan los supuestos tildados
+export function comparePlanned({ available, planned, daysLeft }) {
+  const counted = planned.filter((p) => p.included);
+  const total = counted.reduce((sum, p) => sum + p.amount, 0);
+  const after = available === null ? null : available - total;
+  return {
+    total,
+    count: counted.length,
+    after,
+    perDay: after === null ? null : after / daysLeft,
+  };
+}

@@ -41,3 +41,20 @@ export const getBalance = () => request('/balances');
 
 export const saveBalance = (date, amount) =>
   request(`/balances/${date}`, { method: 'PUT', body: JSON.stringify({ amount }) });
+
+// ---- Supuestos gastos ----
+export const getPlanned = () => request('/planned');
+
+export const createPlanned = (planned) =>
+  request('/planned', { method: 'POST', body: JSON.stringify(planned) });
+
+export const updatePlanned = (id, changes) =>
+  request(`/planned/${id}`, { method: 'PATCH', body: JSON.stringify(changes) });
+
+export const deletePlanned = (id) => request(`/planned/${id}`, { method: 'DELETE' });
+
+export const payPlanned = (id, date) =>
+  request(`/planned/${id}/pay`, { method: 'POST', body: JSON.stringify({ date }) });
+
+export const plannedFromExpense = (expenseId) =>
+  request(`/planned/from-expense/${expenseId}`, { method: 'POST' });

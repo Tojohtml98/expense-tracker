@@ -8,7 +8,7 @@ const formatAmount = (n) =>
 const formatDate = (isoDate) =>
   new Date(isoDate).toLocaleDateString('es-AR', { timeZone: 'UTC' });
 
-export function ExpenseList({ expenses, category, onCategoryChange, onDelete, loading }) {
+export function ExpenseList({ expenses, category, onCategoryChange, onDelete, onMoveToPlanned, loading }) {
   return (
     <section className="expense-list">
       <div className="expense-list-header">
@@ -34,13 +34,26 @@ export function ExpenseList({ expenses, category, onCategoryChange, onDelete, lo
             </span>
             <span className="expense-description">{expense.description}</span>
             <span className="expense-amount">{formatAmount(expense.amount)}</span>
-            <button
-              className="expense-delete"
-              onClick={() => onDelete(expense._id)}
-              aria-label="Eliminar gasto"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
-            </button>
+            <span className="expense-actions">
+              {onMoveToPlanned && (
+                <button
+                  className="expense-icon expense-to-planned"
+                  onClick={() => onMoveToPlanned(expense._id)}
+                  aria-label="Todavía no lo pagué: pasar a supuestos gastos"
+                  title="Todavía no lo pagué: pasar a supuestos gastos"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+                </button>
+              )}
+              <button
+                className="expense-icon expense-delete"
+                onClick={() => onDelete(expense._id)}
+                aria-label="Eliminar gasto"
+                title="Eliminar gasto"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+              </button>
+            </span>
           </li>
         ))}
       </ul>

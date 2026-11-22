@@ -4,6 +4,8 @@ import { ExpenseForm } from './components/ExpenseForm.jsx';
 import { ExpenseList } from './components/ExpenseList.jsx';
 import { Summary } from './components/Summary.jsx';
 import { MoneyCard } from './components/MoneyCard.jsx';
+import { PlannedCard } from './components/PlannedCard.jsx';
+import { usePlanned } from './hooks/usePlanned.js';
 import { DeviceLink } from './components/DeviceLink.jsx';
 import { currentMonth } from './constants.js';
 import './App.css';
@@ -25,6 +27,7 @@ function App({ justLinked = false }) {
     refresh,
   } = useExpenses();
   const money = useBalance();
+  const plan = usePlanned();
 
   // Un gasto nuevo o borrado cambia también cuánto te queda
   const add = async (expense) => {
@@ -35,9 +38,22 @@ function App({ justLinked = false }) {
     await removeExpense(id);
     money.refresh();
   };
+  // Supuesto pagado → aparece en "Gastos del mes" y se descuenta
+  const pay = async (id) => {
+    await plan.pay(id);
+    refresh();
+    money.refresh();
+  };
+  // Gasto que todavía no pagaste → vuelve a supuestos
+  const moveToPlanned = async (id) => {
+    await plan.fromExpense(id);
+    refresh();
+    money.refresh();
+  };
   const relink = () => {
     refresh();
     money.refresh();
+    plan.refresh();
   };
 
   return (
@@ -47,13 +63,23 @@ function App({ justLinked = false }) {
         <h1>Mis gastos</h1>
       </header>
 
-      {(error || money.error) && <p className="error">{error || money.error}</p>}
+      {(error || money.error || plan.error) && <p className="error">{error || money.error || plan.error}</p>}
 
       <MoneyCard
         balance={money.balance}
         loading={money.loading}
         onSave={money.save}
         spentThisMonth={month === currentMonth() ? summary.total : null}
+      />
+
+      <PlannedCard
+        available={money.balance.estimated}
+        planned={plan.planned}
+        loading={plan.loading}
+        onAdd={plan.add}
+        onToggle={plan.toggle}
+        onPay={pay}
+        onRemove={plan.remove}
       />
 
       <div className="app-grid">
@@ -66,6 +92,7 @@ function App({ justLinked = false }) {
         category={category}
         onCategoryChange={setCategory}
         onDelete={remove}
+        onMoveToPlanned={(id) => moveToPlanned(id).catch(() => {})}
         loading={loading}
       />
 

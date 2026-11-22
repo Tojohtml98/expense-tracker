@@ -35,3 +35,9 @@ export const updateExpense = (id, expense) =>
   request(`/expenses/${id}`, { method: 'PUT', body: JSON.stringify(expense) });
 
 export const deleteExpense = (id) => request(`/expenses/${id}`, { method: 'DELETE' });
+
+// ---- "Mi plata": cuánto tengo hoy ----
+export const getBalance = () => request('/balances');
+
+export const saveBalance = (date, amount) =>
+  request(`/balances/${date}`, { method: 'PUT', body: JSON.stringify({ amount }) });

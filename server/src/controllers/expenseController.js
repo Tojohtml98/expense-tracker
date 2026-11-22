@@ -45,7 +45,7 @@ export const createExpense = async (req, res) => {
 
 export const updateExpense = async (req, res, next) => {
   const expense = await Expense.findOneAndUpdate({ _id: req.params.id, owner: req.visitorId }, pick(req.body), {
-    new: true,
+    returnDocument: 'after',
     runValidators: true,
   });
   if (!expense) return next(new AppError('Expense not found', 404));

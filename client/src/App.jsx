@@ -1,9 +1,14 @@
 import { useExpenses } from './hooks/useExpenses.js';
+import { useBalance } from './hooks/useBalance.js';
 import { ExpenseForm } from './components/ExpenseForm.jsx';
 import { ExpenseList } from './components/ExpenseList.jsx';
 import { Summary } from './components/Summary.jsx';
+import { MoneyCard } from './components/MoneyCard.jsx';
 import { DeviceLink } from './components/DeviceLink.jsx';
+import { currentMonth } from './constants.js';
 import './App.css';
+
+const TODAY_FMT = new Intl.DateTimeFormat('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
 
 function App({ justLinked = false }) {
   const {
@@ -19,18 +24,40 @@ function App({ justLinked = false }) {
     removeExpense,
     refresh,
   } = useExpenses();
+  const money = useBalance();
+
+  // Un gasto nuevo o borrado cambia también cuánto te queda
+  const add = async (expense) => {
+    await addExpense(expense);
+    money.refresh();
+  };
+  const remove = async (id) => {
+    await removeExpense(id);
+    money.refresh();
+  };
+  const relink = () => {
+    refresh();
+    money.refresh();
+  };
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Registro de gastos</h1>
-        <p>Cargá tus gastos y mirá en qué se va la plata cada mes.</p>
+        <p className="app-date">{TODAY_FMT.format(new Date())}</p>
+        <h1>Mis gastos</h1>
       </header>
 
-      {error && <p className="error">{error}</p>}
+      {(error || money.error) && <p className="error">{error || money.error}</p>}
+
+      <MoneyCard
+        balance={money.balance}
+        loading={money.loading}
+        onSave={money.save}
+        spentThisMonth={month === currentMonth() ? summary.total : null}
+      />
 
       <div className="app-grid">
-        <ExpenseForm onAdd={addExpense} />
+        <ExpenseForm onAdd={add} />
         <Summary summary={summary} month={month} onMonthChange={setMonth} />
       </div>
 
@@ -38,11 +65,11 @@ function App({ justLinked = false }) {
         expenses={expenses}
         category={category}
         onCategoryChange={setCategory}
-        onDelete={removeExpense}
+        onDelete={remove}
         loading={loading}
       />
 
-      <DeviceLink onLinked={refresh} justLinked={justLinked} />
+      <DeviceLink onLinked={relink} justLinked={justLinked} />
     </div>
   );
 }

@@ -4,9 +4,17 @@
   padding: 3rem 1.25rem 4rem;
 }
 
-.app-header { margin-bottom: 2rem; }
-.app-header h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; }
-.app-header p { margin: 0.4rem 0 0; color: var(--fg-muted); }
+.app-header { margin-bottom: 1.5rem; }
+.app-header h1 { font-size: clamp(1.9rem, 4.5vw, 2.6rem); font-weight: 750; letter-spacing: -0.035em; }
+.app-date {
+  margin: 0 0 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.app-date::first-letter { text-transform: uppercase; }
 
 .app-grid {
   display: grid;
@@ -22,7 +30,7 @@
 .expense-form,
 .summary,
 .expense-list {
-  background: var(--surface);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.5rem;
@@ -224,7 +232,7 @@
 /* ---- usar en otro dispositivo ---- */
 .device-link {
   margin-top: 1.25rem;
-  background: var(--surface);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -313,4 +321,170 @@
 @media (max-width: 640px) {
   .device-link-body { grid-template-columns: 1fr; }
   .device-link-qr { max-width: none; }
+}
+
+/* ---- Mi plata (tarjeta principal) ---- */
+.money {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  padding: 1.75rem;
+  border-radius: calc(var(--radius) + 4px);
+  color: oklch(0.97 0.01 165);
+  background:
+    radial-gradient(80% 120% at 100% 0%, oklch(0.55 0.13 170 / 0.55), transparent 60%),
+    radial-gradient(60% 90% at 0% 100%, oklch(0.5 0.1 200 / 0.45), transparent 60%),
+    linear-gradient(140deg, oklch(0.33 0.07 168), oklch(0.22 0.045 180));
+  box-shadow: 0 24px 48px -20px oklch(0.25 0.08 170 / 0.55), inset 0 1px 0 oklch(1 0 0 / 0.12);
+}
+.money h2 {
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(0.85 0.06 165);
+}
+.money-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  gap: 1.5rem;
+  align-items: end;
+}
+.money-top > * { min-width: 0; }
+.money-big {
+  margin: 0.25rem 0 0.35rem;
+  font-size: clamp(2.4rem, 7vw, 3.4rem);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.money-skeleton {
+  display: inline-block;
+  width: 9ch;
+  height: 0.8em;
+  border-radius: 10px;
+  background: linear-gradient(90deg, oklch(1 0 0 / 0.1), oklch(1 0 0 / 0.22), oklch(1 0 0 / 0.1));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+.money-sub { margin: 0; font-size: 0.9rem; color: oklch(0.86 0.03 165); }
+
+.money label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(0.85 0.06 165);
+}
+.money-input {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2.9rem;
+  padding: 0 0.35rem 0 0.9rem;
+  border-radius: 12px;
+  background: oklch(1 0 0 / 0.1);
+  border: 1px solid oklch(1 0 0 / 0.18);
+  transition: border-color 160ms var(--ease), background 160ms var(--ease);
+}
+.money-input:focus-within { border-color: var(--mint); background: oklch(1 0 0 / 0.16); }
+.money-input > span { color: oklch(0.85 0.06 165); font-weight: 600; }
+.money-input input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+.money-input input::placeholder { color: oklch(1 0 0 / 0.45); }
+.money-input button {
+  height: 2.25rem;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 9px;
+  background: var(--mint);
+  color: oklch(0.22 0.05 175);
+  font-weight: 650;
+  cursor: pointer;
+  transition: transform 100ms, filter 160ms;
+}
+.money-input button:hover:not(:disabled) { filter: brightness(1.06); }
+.money-input button:active:not(:disabled) { transform: translateY(1px); }
+.money-input button:disabled { opacity: 0.5; cursor: not-allowed; }
+.money-error { margin: 0.5rem 0 0; font-size: 0.85rem; color: oklch(0.85 0.12 30); }
+
+.money-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+}
+.money-stats > div {
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: oklch(1 0 0 / 0.07);
+  border: 1px solid oklch(1 0 0 / 0.1);
+}
+.money-stats dt { font-size: 0.78rem; color: oklch(0.82 0.04 165); }
+.money-stats dd {
+  margin: 0.25rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.money .is-good { color: var(--mint); }
+.money .is-bad { color: oklch(0.8 0.13 40); }
+
+.money-spark { margin: 1.25rem 0 0; color: var(--mint); }
+.money-spark svg { display: block; width: 100%; height: 64px; }
+.money-spark figcaption {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: oklch(0.8 0.03 165);
+}
+.money-spark-empty { margin: 1.25rem 0 0; font-size: 0.85rem; color: oklch(0.8 0.03 165); }
+
+.money-sim {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid oklch(1 0 0 / 0.12);
+}
+.money-sim .money-input { max-width: 300px; padding-right: 0.9rem; }
+.money-sim-result { margin: 0.65rem 0 0; font-size: 0.95rem; font-weight: 550; }
+
+/* Tarjetas claras: un velo apenas translúcido deja ver la aurora; el desenfoque
+   solo en pantallas grandes (en celus gama baja hace lento el scroll) */
+@media (min-width: 641px) {
+  @supports (backdrop-filter: blur(1px)) {
+    .expense-form, .summary, .expense-list, .device-link {
+      --card: oklch(0.995 0.004 150 / 0.78);
+      backdrop-filter: blur(14px) saturate(1.2);
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .money-top { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .money-sim .money-input { max-width: none; }
+}
+@media (max-width: 480px) {
+  .money { padding: 1.25rem; border-radius: var(--radius); }
+  .money-stats { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .money-stats > div:nth-child(3) { grid-column: 1 / -1; }
+  .money-stats dd { font-size: 1.05rem; }
 }

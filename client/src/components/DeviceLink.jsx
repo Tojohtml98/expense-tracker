@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import QRCode from 'qrcode';
 import { isInstalledApp, linkDevice, linkUrl, startedFresh, visitorId } from '../api/device.js';
 
 export function DeviceLink({ onLinked, justLinked }) {
@@ -15,7 +14,11 @@ export function DeviceLink({ onLinked, justLinked }) {
 
   useEffect(() => {
     if (!open) return;
-    QRCode.toDataURL(linkUrl(), { margin: 1, width: 360, color: { dark: '#1b2a24', light: '#ffffff' } })
+    // La librería del QR se baja recién al abrir el panel: no pesa en la carga inicial
+    import('qrcode')
+      .then(({ default: QRCode }) =>
+        QRCode.toDataURL(linkUrl(), { margin: 1, width: 360, color: { dark: '#1b2a24', light: '#ffffff' } }),
+      )
       .then(setQr)
       .catch(() => setQr(''));
   }, [open, message]);
